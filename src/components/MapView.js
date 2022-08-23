@@ -15,7 +15,7 @@ export default function MapView() {
   const ref = useRef(null)
   const mapRef = useRef(null)
   const[geolocation,setGeoLocation] = useState({})
-  const[pstnFeature,setPstnFeature] = useState(null)
+  const[pstnFeature,setPstnFeature] = useState(new Feature())
 
   const view = new View({
     center: [0, 0],
@@ -42,9 +42,9 @@ export default function MapView() {
       positionFeature.setStyle(
         new Style({
           image: new CircleStyle({
-            radius: 6,
+            radius: 8,
             fill: new Fill({
-              color: '#3399CC',
+              color: 'red',
             }),
             stroke: new Stroke({
               color: '#fff',
@@ -55,14 +55,19 @@ export default function MapView() {
       );
       setPstnFeature(positionFeature)
 
+      const vectorLayer = new VectorLayer({
+        source: new VectorSource({
+          features: [positionFeature]
+        }),
+      });
+
       const map = new Map({
         layers: [
             new TileLayer({source: new OSM()}),
+            vectorLayer
         ],
         view: view,
         target:ref.current
-      }).on('singleclick',(event) => {
-        alert(event.coordinate)
       })
 
       mapRef.current = map
